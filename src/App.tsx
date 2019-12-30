@@ -51,7 +51,8 @@ const App: React.FC = () => {
     "怂 2015-09-08.html",
     "圈 2016-11-21.html",
     "莽 2017-12-31.html",
-    "Black Lullaby 2018-12-31.html"
+    "Black Lullaby 2018-12-31.html",
+    "逃离母宇宙 2019-12-28.html"
   ];
 
   return (
