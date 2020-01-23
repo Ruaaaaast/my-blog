@@ -2,7 +2,7 @@ import React from "react";
 import Header from "./Header";
 import ArticlePage from "./ArticlePage";
 import styled from "styled-components";
-
+import Playground from "./Playground";
 /**
  *  CSS Type
  */
@@ -61,7 +61,8 @@ const App: React.FC = () => {
         <Header name="Who Knews" />
       </Container>
       <Container className="App-Content" {...ContentContainer}>
-        <ArticlePage articleList={articleList.reverse()} />
+        {/* <ArticlePage articleList={articleList.reverse()} /> */}
+        <Playground x={0} y={0} />
       </Container>
     </div>
   );

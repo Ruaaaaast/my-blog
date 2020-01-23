@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { withMouse } from "./Playground";
 
 type ArticlePageProps = {
   articleList: Array<string>;
@@ -34,23 +35,27 @@ const TitleP = styled.p`
   margin-top: 2px;
 `;
 
-const ArticlePage: React.FC<ArticlePageProps> = ({ articleList }) => {
-  return (
-    <WrapperDiv className="ArticlePage">
-      {articleList.map((value, index) => {
-        const date = value.split(".")[0].slice(-10);
-        const title = value.split(".")[0].slice(0, -10);
-        console.log(date);
-        console.log(title);
-        return (
-          <ArticleDivBox key={index} islast={index === articleList.length - 1}>
-            <TitleP>{date}</TitleP>
-            <TitleA href={value}>{title}</TitleA>
-          </ArticleDivBox>
-        );
-      })}
-    </WrapperDiv>
-  );
-};
+class ArticlePage extends React.Component<ArticlePageProps> {
+  render() {
+    const { articleList } = this.props;
+    return (
+      <WrapperDiv className="ArticlePage">
+        {articleList.map((value, index) => {
+          const date = value.split(".")[0].slice(-10);
+          const title = value.split(".")[0].slice(0, -10);
+          return (
+            <ArticleDivBox
+              key={index}
+              islast={index === articleList.length - 1}
+            >
+              <TitleP>{date}</TitleP>
+              <TitleA href={value}>{title}</TitleA>
+            </ArticleDivBox>
+          );
+        })}
+      </WrapperDiv>
+    );
+  }
+}
 
 export default ArticlePage;
