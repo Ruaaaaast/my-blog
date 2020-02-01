@@ -2,7 +2,12 @@ import React from "react";
 import Header from "./Header";
 import ArticlePage from "./ArticlePage";
 import styled from "styled-components";
-import Playground from "./Playground";
+import HocEnhancer from "./HocEnhancer";
+import HoCInjector from "./HoCInjector";
+import RenderProps from "./RenderProps";
+import Hooks from "./Hooks";
+import InfTable from "./table/InfTable";
+
 /**
  *  CSS Type
  */
@@ -61,8 +66,22 @@ const App: React.FC = () => {
         <Header name="Who Knews" />
       </Container>
       <Container className="App-Content" {...ContentContainer}>
-        {/* <ArticlePage articleList={articleList.reverse()} /> */}
-        <Playground x={0} y={0} />
+        {/*<ArticlePage articleList={articleList.reverse()} />*/}
+        {/*
+        <HocEnhancer
+          x={1}
+          y={2}
+          value={100}
+          onDecrement={() => null}
+          onIncrement={() => null}
+        /> */}
+        {/* <HoCInjector
+          value={0}
+          onDecrement={() => null}
+          onIncrement={() => null}
+        /> */}
+        {/*<RenderProps />*/}
+        <InfTable />
       </Container>
     </div>
   );

@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { withMouse } from "./Playground";
 
 type ArticlePageProps = {
   articleList: Array<string>;

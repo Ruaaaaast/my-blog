@@ -1,0 +1,15 @@
+.ReactVirtualized__Table__headerRow,
+.evenRow,
+.oddRow {
+  border-bottom: 1px solid #e0e0e0;
+}
+.oddRow {
+}
+
+.headerColumn {
+  text-transform: none;
+}
+
+.ReactVirtualized__Table__headerRow {
+  padding-right: 0% !important;
+}
