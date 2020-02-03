@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import React, { useState, useEffect, FunctionComponent } from "react";
 import {
   InfiniteLoader,
@@ -5,26 +6,40 @@ import {
   Index,
   IndexRange,
   Column,
-  TableHeaderProps
+  TableHeaderProps,
+  AutoSizer,
+  Size
 } from "react-virtualized";
 import Draggable from "react-draggable";
 import "./InfTable.css";
+import styled from "styled-components";
 
+// Fake Data
 const columnList = [
-  { name: "column1", length: 20 },
-  { name: "column2", length: 20 },
-  { name: "column3", length: 20 },
+  { name: "column1", length: 30 },
+  { name: "column2", length: 40 },
+  { name: "column3", length: 100 },
   { name: "column4", length: 20 },
   { name: "column5", length: 20 }
 ];
 
+// Stype Component CSS
+const DragHandleIcon = styled.span`
+  flex: 0 0 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform: none !important;
+`;
+
+// Functional Component
 const InfTable: FunctionComponent = () => {
   function isRowLoaded({ index }: Index) {
     return !!list[index];
   }
 
   function loadMoreRows({ startIndex, stopIndex }: IndexRange) {
-    console.log("Loading from " + startIndex + " to " + stopIndex);
     return new Promise((resolve, reject) => {
       let newList = [...list].concat(generateRow(10, list.length));
       setList(newList);
@@ -78,9 +93,7 @@ const InfTable: FunctionComponent = () => {
     }
   }
 
-  function onRowClick({ index }: Index) {
-    console.log("You click " + index);
-  }
+  function onRowClick({ index }: Index) {}
 
   function calculateRatio(
     list: { name: string; length: number }[]
@@ -100,38 +113,30 @@ const InfTable: FunctionComponent = () => {
   function columnHeaderRender({ dataKey, label }: TableHeaderProps) {
     return (
       <React.Fragment key={dataKey}>
-        <span
+        <div
           className="ReactVirtualized__Table__headerTruncatedText"
           key="label"
         >
           {label}
-        </span>
-        <Draggable
-          axis="x"
-          handle=".handle"
-          key="drag-icon"
-          onStart={(e, data) => {
-            setLastX(data.x);
-          }}
-          position={{ x: 0, y: 0 }}
-          onStop={(e, data) => {
-            let deltaRatio = (data.x - lastX) / 1200;
-            let newColumnRatio = {
-              ...columnRatio,
-              [dataKey]: columnRatio[dataKey] + deltaRatio,
-              [nextKey(dataKey)]: columnRatio[nextKey(dataKey)] - deltaRatio
-            };
-            setColumnRatio(newColumnRatio);
-          }}
-        >
-          <div
-            key={dataKey}
-            className="handle"
-            style={{ display: "inline-block", float: "right" }}
+        </div>
+        {dataKey === columnList[columnList.length - 1].name ? null : (
+          <Draggable
+            axis="x"
+            defaultClassName="DragHandle"
+            position={{ x: 0, y: 0 }}
+            onDrag={(e, data) => {
+              let deltaRatio = data.deltaX / 1200;
+              let newColumnRatio = {
+                ...columnRatio,
+                [dataKey]: columnRatio[dataKey] + deltaRatio,
+                [nextKey(dataKey)]: columnRatio[nextKey(dataKey)] - deltaRatio
+              };
+              setColumnRatio(newColumnRatio);
+            }}
           >
-            :
-          </div>
-        </Draggable>
+            <DragHandleIcon>:</DragHandleIcon>
+          </Draggable>
+        )}
       </React.Fragment>
     );
   }
@@ -140,45 +145,43 @@ const InfTable: FunctionComponent = () => {
 
   const [columnRatio, setColumnRatio] = useState(calculateRatio(columnList));
 
-  const [lastX, setLastX] = useState(0);
-
-  console.log(columnRatio);
-
   return (
-    <div>
-      <InfiniteLoader
-        isRowLoaded={isRowLoaded}
-        loadMoreRows={loadMoreRows}
-        rowCount={1000}
-      >
-        {({ onRowsRendered, registerChild }) => (
-          <Table
-            width={1270}
-            height={800}
-            headerHeight={40}
-            rowHeight={40}
-            rowCount={list.length}
-            rowGetter={({ index }) => list[index]}
-            onRowsRendered={onRowsRendered}
-            onRowClick={onRowClick}
-            rowClassName={rowClassName}
-            headerClassName="headerColumn"
-            ref={registerChild}
-          >
-            <Column label="Index" dataKey="index" width={50} />
-            {columnList.map(column => (
-              <Column
-                label={column.name}
-                dataKey={column.name}
-                width={1200 * columnRatio[column.name]}
-                key={column.name}
-                headerRenderer={columnHeaderRender}
-              ></Column>
-            ))}
-          </Table>
-        )}
-      </InfiniteLoader>
-    </div>
+    <InfiniteLoader
+      isRowLoaded={isRowLoaded}
+      loadMoreRows={loadMoreRows}
+      rowCount={1000}
+    >
+      {({ onRowsRendered, registerChild }) => (
+        <AutoSizer>
+          {({ width, height }: Size) => (
+            <Table
+              width={width}
+              height={height}
+              headerHeight={40}
+              rowHeight={40}
+              rowCount={list.length}
+              rowGetter={({ index }) => list[index]}
+              onRowsRendered={onRowsRendered}
+              onRowClick={onRowClick}
+              rowClassName={rowClassName}
+              headerClassName="headerColumn"
+              ref={registerChild}
+            >
+              <Column label="Index" dataKey="index" width={50} />
+              {columnList.map(column => (
+                <Column
+                  label={column.name}
+                  dataKey={column.name}
+                  width={(width - 70) * columnRatio[column.name]}
+                  key={column.name}
+                  headerRenderer={columnHeaderRender}
+                ></Column>
+              ))}
+            </Table>
+          )}
+        </AutoSizer>
+      )}
+    </InfiniteLoader>
   );
 };
 
