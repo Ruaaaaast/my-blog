@@ -125,7 +125,7 @@ const InfTable: FunctionComponent = () => {
             defaultClassName="DragHandle"
             position={{ x: 0, y: 0 }}
             onDrag={(e, data) => {
-              let deltaRatio = data.deltaX / 1200;
+              let deltaRatio = data.deltaX / (screenWidth - 70);
               let newColumnRatio = {
                 ...columnRatio,
                 [dataKey]: columnRatio[dataKey] + deltaRatio,
@@ -142,7 +142,7 @@ const InfTable: FunctionComponent = () => {
   }
 
   const [list, setList] = useState(generateRow(10, 0));
-
+  const [screenWidth, setScreenWidth] = useState(0);
   const [columnRatio, setColumnRatio] = useState(calculateRatio(columnList));
 
   return (
@@ -153,32 +153,36 @@ const InfTable: FunctionComponent = () => {
     >
       {({ onRowsRendered, registerChild }) => (
         <AutoSizer>
-          {({ width, height }: Size) => (
-            <Table
-              width={width}
-              height={height}
-              headerHeight={40}
-              rowHeight={40}
-              rowCount={list.length}
-              rowGetter={({ index }) => list[index]}
-              onRowsRendered={onRowsRendered}
-              onRowClick={onRowClick}
-              rowClassName={rowClassName}
-              headerClassName="headerColumn"
-              ref={registerChild}
-            >
-              <Column label="Index" dataKey="index" width={50} />
-              {columnList.map(column => (
-                <Column
-                  label={column.name}
-                  dataKey={column.name}
-                  width={(width - 70) * columnRatio[column.name]}
-                  key={column.name}
-                  headerRenderer={columnHeaderRender}
-                ></Column>
-              ))}
-            </Table>
-          )}
+          {({ width, height }: Size) => {
+            setScreenWidth(width);
+            console.log(width);
+            return (
+              <Table
+                width={width}
+                height={height}
+                headerHeight={40}
+                rowHeight={40}
+                rowCount={list.length}
+                rowGetter={({ index }) => list[index]}
+                onRowsRendered={onRowsRendered}
+                onRowClick={onRowClick}
+                rowClassName={rowClassName}
+                headerClassName="headerColumn"
+                ref={registerChild}
+              >
+                <Column label="Index" dataKey="index" width={50} />
+                {columnList.map(column => (
+                  <Column
+                    label={column.name}
+                    dataKey={column.name}
+                    width={(width - 70) * columnRatio[column.name]}
+                    key={column.name}
+                    headerRenderer={columnHeaderRender}
+                  ></Column>
+                ))}
+              </Table>
+            );
+          }}
         </AutoSizer>
       )}
     </InfiniteLoader>
